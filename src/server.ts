@@ -56,8 +56,8 @@ app.get('/', (req: Request, res: Response) => {
 
 // user crud
 
-app.get('/users', async(req: Request, res: Response)=>{
-    try{
+app.get('/users', async (req: Request, res: Response) => {
+    try {
         const result = await pool.query(`SELECT * FROM users`)
 
         res.status(200).json({
@@ -66,7 +66,7 @@ app.get('/users', async(req: Request, res: Response)=>{
             data: result.rows
         })
 
-    }catch(err: any){
+    } catch (err: any) {
         res.status(500).json({
             success: false,
             message: err.message
@@ -75,15 +75,15 @@ app.get('/users', async(req: Request, res: Response)=>{
 })
 
 // get single user
-app.get('/users/:id', async (req: Request, res:Response)=>{
-    try{
+app.get('/users/:id', async (req: Request, res: Response) => {
+    try {
         const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [req.params.id])
-        if(result.rows.length ===0){
+        if (result.rows.length === 0) {
             res.status(404).json({
                 success: false,
                 message: 'User not found'
             })
-        }else{
+        } else {
             res.status(200).json({
                 success: true,
                 message: "user fetched successfully",
@@ -91,7 +91,7 @@ app.get('/users/:id', async (req: Request, res:Response)=>{
             })
         }
 
-    }catch(err: any){
+    } catch (err: any) {
         res.status(500).json({
             success: false,
             message: err.message
@@ -99,6 +99,7 @@ app.get('/users/:id', async (req: Request, res:Response)=>{
     }
 })
 
+// user post api
 app.post('/users', async (req: Request, res: Response) => {
     const { name, email } = req.body;
     try {
@@ -112,6 +113,32 @@ app.post('/users', async (req: Request, res: Response) => {
             message: 'Data Inserted',
             data: result.rows[0]
         })
+
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        })
+    }
+})
+
+// user update api
+app.put('/users/:id', async (req: Request, res: Response) => {
+    const { name, email } = req.body;
+    try {
+        const result = await pool.query(`UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING *`, [name, email, req.params.id])
+        if (result.rows.length === 0) {
+            res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        } else {
+            res.status(200).json({
+                success: true,
+                message: "user updated successfully",
+                data: result.rows[0]
+            })
+        }
 
     } catch (err: any) {
         res.status(500).json({
