@@ -174,6 +174,25 @@ app.delete('/users/:id', async (req: Request, res: Response) => {
 })
 
 // todos crud
+
+app.get('/todos', async (req: Request, res: Response) => {
+    try {
+        const result = await pool.query(`SELECT * FROM todos`)
+
+        res.status(200).json({
+            success: true,
+            message: 'Get todos data',
+            data: result.rows
+        })
+
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        })
+    }
+})
+
 app.post('/todos', async(req: Request, res: Response)=>{
     const {user_id, title}= req.body;
 
