@@ -21,15 +21,41 @@ app.get('/', logger, (req: Request, res: Response) => {
 
 // user crud
 
-app.get('/users', async (req: Request, res: Response) => {
-    try {
-        const result = await pool.query(`SELECT * FROM users`)
+// app.get('/users', async (req: Request, res: Response) => {
+//     try {
+//         const result = await pool.query(`SELECT * FROM users`)
 
-        res.status(200).json({
-            success: true,
-            message: 'Get users data',
-            data: result.rows
-        })
+//         res.status(200).json({
+//             success: true,
+//             message: 'Get users data',
+//             data: result.rows
+//         })
+
+//     } catch (err: any) {
+//         res.status(500).json({
+//             success: false,
+//             message: err.message
+//         })
+//     }
+// })
+
+// get single user
+// app.use("/users", usersRoute)
+app.get('/users/:id', async (req: Request, res: Response) => {
+    try {
+        const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [req.params.id])
+        if (result.rows.length === 0) {
+            res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        } else {
+            res.status(200).json({
+                success: true,
+                message: "user fetched successfully",
+                data: result.rows[0]
+            })
+        }
 
     } catch (err: any) {
         res.status(500).json({
@@ -39,55 +65,8 @@ app.get('/users', async (req: Request, res: Response) => {
     }
 })
 
-// get single user
-app.use("/users", usersRoute)
-// app.get('/users/:id', async (req: Request, res: Response) => {
-//     try {
-//         const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [req.params.id])
-//         if (result.rows.length === 0) {
-//             res.status(404).json({
-//                 success: false,
-//                 message: 'User not found'
-//             })
-//         } else {
-//             res.status(200).json({
-//                 success: true,
-//                 message: "user fetched successfully",
-//                 data: result.rows[0]
-//             })
-//         }
-
-//     } catch (err: any) {
-//         res.status(500).json({
-//             success: false,
-//             message: err.message
-//         })
-//     }
-// })
-
 // user post api
 app.use("/users", usersRoute)
-
-//     const { name, email } = req.body;
-//     try {
-//         const result = await pool.query(`INSERT INTO users(name, email) VALUES($1, $2) RETURNING *`, [name, email])
-
-//         // console.log(result.rows[0])
-//         // res.send({message:'data inserted successfully'})
-
-//         res.status(201).json({
-//             success: true,
-//             message: 'Data Inserted',
-//             data: result.rows[0]
-//         })
-
-//     } catch (err: any) {
-//         res.status(500).json({
-//             success: false,
-//             message: err.message
-//         })
-//     }
-// })
 
 // user update api
 app.put('/users/:id', async (req: Request, res: Response) => {
