@@ -7,15 +7,15 @@ const router = Router();
 
 
 // router -> controller -> service 
-router.post('/',  userControllers.createUser)
+router.post('/',  userControllers.createUser);
 
 router.get('/', auth(), userControllers.getUser);
 
-router.get('/:id',  userControllers.getSingleUser)
+router.get('/:id',  userControllers.getSingleUser);
 
-router.put('/:id',  userControllers.updateUser)
+router.put('/:id',  userControllers.updateUser);
 
-router.delete('/:id',  userControllers.deleteUser)
+router.delete('/:id',  userControllers.deleteUser);
 
 
 export const usersRoute = router;
